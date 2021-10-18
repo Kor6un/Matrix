@@ -1,16 +1,15 @@
 /*https://russianblogs.com/article/945599118/*/
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BasicMatrixMath {
     public static void main(String[] args) {
         writeFile("result.txt");
-        readFile("src\\matrixa.txt");
+        System.out.println(readFile("src\\matrixa.txt"));
+
         System.out.println();
         readFile("src\\matrixb.txt");
 
@@ -37,16 +36,31 @@ public class BasicMatrixMath {
         }
     }
 
-    public static void readFile(String fileName) {
+    public static List<String> readFile(String path) {
+        List<String> strings = new ArrayList<>();
+
         try {
-            Files.lines(Paths.get(fileName), StandardCharsets.UTF_8)
-                    .forEach(System.out::println);
+            File file = new File(path);
+            //создаем объект FileReader для объекта File
+            FileReader fr = new FileReader(file);
+            //создаем BufferedReader с существующего FileReader для построчного считывания
+            BufferedReader reader = new BufferedReader(fr);
+            // считаем сначала первую строку
+            String line = reader.readLine();
+            while (line != null) {
+                strings.add(line);
+                // считываем остальные строки в цикле
+                line = reader.readLine();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return strings;
     }
 
-    public static void writeFile (String fileName) {
+    public static void writeFile (String path) {
 
         try(FileWriter writer = new FileWriter("src\\result.txt", false))
         {
@@ -77,7 +91,9 @@ public class BasicMatrixMath {
     public final static int OPERATION_SUB = 2;
 
     public int[][] add(int[][] matrixa, int[][] matrixb) {
+
         int[][] result = new int[matrixa.length][matrixa[0].length];
+
         if (legalOperation(matrixa, matrixb, OPERATION_ADD)) {
             for(int i = 0; i<matrixa.length; i++) {
                 for(int j = 0; j < matrixa[0].length; j++) {
