@@ -1,22 +1,24 @@
 /*https://russianblogs.com/article/945599118/*/
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BasicMatrixMath {
     public static void main(String[] args) {
-        writeFile("result.txt");
-        readFile("src\\matrixa.txt");
+        BasicMatrixMath bmm = new BasicMatrixMath();
+
+        bmm.writeFile("result.txt");
+        bmm.readFile("src\\matrixa.txt");
         System.out.println();
-        readFile("src\\matrixb.txt");
+        bmm.readFile("src\\matrixb.txt");
 
         int[][] a = new int[][] {{1, 2}, {3, 4}};
         int[][] b = new int[][] {{7, 8}, {6, 15}};
-        BasicMatrixMath bmm = new BasicMatrixMath();
 
         System.out.println("addition two matrix");
         int[][] result = bmm.add(a, b);
@@ -37,7 +39,7 @@ public class BasicMatrixMath {
         }
     }
 
-    public static void readFile(String fileName) {
+    public void readFile(String fileName) {
         try {
             Files.lines(Paths.get(fileName), StandardCharsets.UTF_8)
                     .forEach(System.out::println);
@@ -46,7 +48,16 @@ public class BasicMatrixMath {
         }
     }
 
-    public static void writeFile (String fileName) {
+    public List<Integer> stringToIntArray (String input) {
+        List<Integer> result = new ArrayList<>();
+        String [] strings = input.split(" ");
+        for (int i = 0; i < strings.length; i++) {
+            result.add(Integer.valueOf(strings[i]));
+        }
+        return result;
+    }
+
+    public void writeFile (String fileName) {
 
         try(FileWriter writer = new FileWriter("src\\result.txt", false))
         {
