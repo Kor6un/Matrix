@@ -1,55 +1,86 @@
 /*https://russianblogs.com/article/945599118/*/
 
-
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BasicMatrixMath {
     public static void main(String[] args) {
-        writeFile("result.txt");
-        System.out.println(readFile("src\\matrixa.txt"));
 
-        System.out.println();
-        readFile("src\\matrixb.txt");
-
-        int[][] a = new int[][] {{1, 2}, {3, 4}};
-        int[][] b = new int[][] {{7, 8}, {6, 15}};
         BasicMatrixMath bmm = new BasicMatrixMath();
 
-        System.out.println("addition two matrix");
-        int[][] result = bmm.add(a, b);
-        for(int i = 0; i < result.length; i++) {
-            for(int j = 0; j < result[0].length; j++) {
-                System.out.print("\t" + result[i][j]);
+        int[][] a = bmm.readFile("src\\matrixa.txt");
+        int[][] b = bmm.readFile("src\\matrixb.txt");
+
+     /*   System.out.println("Original matrix a:");
+
+        for(int i = 0; i < a.length; i++) {
+            for(int j = 0; j < a[0].length; j++) {
+                System.out.print("\t" + a[i][j]);
             }
             System.out.println();
         }
 
-        System.out.println("substract two matrix");
-        result = bmm.substract(a, b);
-        for(int i = 0; i < result.length; i++) {
-            for(int j = 0; j < result[0].length; j++) {
-                System.out.print("\t" + result[i][j]);
+        System.out.println("Original matrix b:");
+
+        for(int i = 0; i < b.length; i++) {
+            for(int j = 0; j < b[0].length; j++) {
+                System.out.print("\t" + b[i][j]);
             }
             System.out.println();
+        }*/
+
+        boolean flag = false;
+        int[][] result;
+
+        if (flag) {
+            System.out.println("addition two matrix");
+
+            result = bmm.add(a, b);
+
+            for(int i = 0; i < result.length; i++) {
+                for(int j = 0; j < result[0].length; j++) {
+                    System.out.print("\t" + result[i][j]);
+                }
+                System.out.println();
+            }
+
+            bmm.writeFile("src\\result.txt", result);
+        } else {
+            System.out.println("substract two matrix");
+
+            result = bmm.substract(a, b);
+
+            for(int i = 0; i < result.length; i++) {
+                for(int j = 0; j < result[0].length; j++) {
+                    System.out.print("\t" + result[i][j]);
+                }
+                System.out.println();
+            }
+            bmm.writeFile("src\\result.txt", result);
         }
     }
 
-    public static List<String> readFile(String path) {
-        List<String> strings = new ArrayList<>();
+    public int[][] readFile(String path) {
+
+        int[][] result = null;
 
         try {
             File file = new File(path);
-            //создаем объект FileReader для объекта File
             FileReader fr = new FileReader(file);
-            //создаем BufferedReader с существующего FileReader для построчного считывания
             BufferedReader reader = new BufferedReader(fr);
-            // считаем сначала первую строку
             String line = reader.readLine();
+
+            int i = 0;
+
+            String[]  strings = line.split(" ");
+
+            result = new int[strings.length][strings.length];
+
             while (line != null) {
-                strings.add(line);
-                // считываем остальные строки в цикле
+                strings = line.split(" ");
+                for (int j = 0; j < strings.length; j++) {
+                    result[i][j] = Integer.parseInt(strings[j]);
+                }
+                i++;
                 line = reader.readLine();
             }
         } catch (FileNotFoundException e) {
@@ -57,73 +88,48 @@ public class BasicMatrixMath {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return strings;
+        return result;
     }
 
-    public static void writeFile (String path) {
+    public void writeFile (String path, int[][] matrix) {
 
-        try(FileWriter writer = new FileWriter("src\\result.txt", false))
+        try(FileWriter writer = new FileWriter(path, false))
         {
-            // запись всей строки
-            String text = "Hello Gold!";
-            writer.write(text);
-            // запись по символам
-            writer.append('\n');
-            writer.append('E');
-
+            for(int i = 0; i < matrix.length; i++) {
+                for(int j = 0; j < matrix[0].length; j++) {
+                    writer.append("\t" + matrix[i][j]);
+                }
+                writer.append("\n");
+            }
             writer.flush();
+            System.out.println("File is writing");
         }
         catch(IOException ex){
-
-            System.out.println(ex.getMessage());
+            System.out.println("Error! File is NOT writing!" + ex.getMessage());
         }
-
-      /*  try {
-            Files.write(Paths.get("src/Resources/output.txt"), data.getBytes());
-            System.out.println("File is writing!");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("File is NOT writing!!!!\n" + e);
-        }*/
     }
 
-    public final static int OPERATION_ADD = 1;
-    public final static int OPERATION_SUB = 2;
+    public int[][] add(int[][] a, int[][] b) {
 
-    public int[][] add(int[][] matrixa, int[][] matrixb) {
+        int[][] result = new int[a.length][a[0].length];
 
-        int[][] result = new int[matrixa.length][matrixa[0].length];
-
-        if (legalOperation(matrixa, matrixb, OPERATION_ADD)) {
-            for(int i = 0; i<matrixa.length; i++) {
-                for(int j = 0; j < matrixa[0].length; j++) {
-                    result[i][j] = matrixa[i][j] + matrixb[i][j];
-                }
+        for(int i = 0; i < a.length; i++) {
+            for(int j = 0; j < a[0].length; j++) {
+                result[i][j] = a[i][j] + b[i][j];
             }
         }
         return result;
     }
 
-    public int[][] substract(int[][] matrixa, int[][] matrixb) {
-        int[][] result = new int[matrixa.length][matrixa[0].length];
-        if(legalOperation(matrixa, matrixb, OPERATION_ADD)) {
-            for(int i=0; i<matrixa.length; i++) {
-                for(int j=0; j<matrixa[0].length; j++) {
-                    result[i][j] = matrixa[i][j] - matrixb[i][j];
-                }
+    public int[][] substract(int[][] a, int[][] b) {
+
+        int[][] result = new int[a.length][a[0].length];
+
+        for(int i = 0; i < a.length; i++) {
+            for(int j = 0; j < a[0].length; j++) {
+                result[i][j] = a[i][j] - b[i][j];
             }
         }
         return result;
-    }
-
-    private boolean legalOperation(int[][] a, int[][] b, int type) {
-        boolean legal = true;
-        if(type == OPERATION_ADD || type == OPERATION_SUB)
-        {
-            if(a.length != b.length || a[0].length != b[0].length) {
-                legal = false;
-            }
-        }
-        return legal;
     }
 }
